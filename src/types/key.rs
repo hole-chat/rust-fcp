@@ -8,13 +8,14 @@ pub struct SSK {
     pub decrypt_key: String,
     pub settings: Option<String>,
 }
-
+/// converting SSK to rusqlite type
 impl ToSql for SSK {
     fn to_sql(&self) -> Result<ToSqlOutput<'_>> {
         Ok(ToSqlOutput::from(self.convert()))
     }
 }
 
+/// converting from rusqlite type to SSK
 impl FromSql for SSK{
     fn column_result(value: ValueRef<'_>) -> FromSqlResult<Self>{
         match SSK::parse(value.as_str()?) {

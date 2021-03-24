@@ -13,4 +13,3 @@ description = "Implementation of FCPv2 freenet protocol"
 [dependencies]
 regex = "1.4.3"
 rusqlite = "0.24.2"
-serde = { version = "1.0", features = ["derive"], optional = true }
