@@ -9,6 +9,8 @@ It's set of structures from [official FCPv2 wiki](https://github.com/freenet/wik
 
 Open for contributig!!!
 
+
+[Project Roadmap](https://www.notion.so/horhi/edc5cec29e6f4d41890af9d584d14a21?v=7ac59ef05d7d437f97d9666f889679f3) *(in Notion)*
 ----
 **DONT USE IT FOR PRODUCTION!!!** current versions is SO UNSTABLE!
 
