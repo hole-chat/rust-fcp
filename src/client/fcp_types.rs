@@ -227,7 +227,7 @@ impl SSKKeypair {
 pub struct ClientPut {
     uri: SSK, //TODO create key type
     data_length: usize,
-    filename: String,
+    filename: Option<String>,
     content_type: Option<String>,
     identifier: String,
     verbosity: Option<VerbosityPut>,
@@ -269,6 +269,7 @@ impl FcpRequest for ClientPut {
         let client_token = to_fcp_unwrap("ClientToken=", &self.client_token, "\n");
         let persistence = to_fcp_unwrap("Persistence=", &self.persistence, "\n");
         let target_filename = to_fcp_unwrap("TargetFilename=", &self.target_filename, "\n");
+        let filename = to_fcp_unwrap("Filename=", &self.filename, "\n");
         let early_encode = to_fcp_unwrap("EarlyEncode=", &self.early_encode, "\n");
         let upload_from = to_fcp_unwrap("UploadFrom=", &self.upload_from, "\n");
         let target_uri = to_fcp_unwrap("TargetURI=", &self.target_uri, "\n");
@@ -321,7 +322,7 @@ impl FcpRequest for ClientPut {
                  ",
             format!("URI={}\n", self.uri.convert()),
             format!("DataLength={}\n", self.data_length),
-            format!("Filename={}\n", self.filename),
+            filename,
             content_type,
             identifier,
             verbosity,
@@ -354,11 +355,11 @@ impl FcpRequest for ClientPut {
 }
 
 impl ClientPut {
-    pub fn new_default(uri: SSK, filename: &str, identifier: &str, data: &str) -> ClientPut {
+    pub fn new_default_direct(uri: SSK,  identifier: &str, data: &str) -> ClientPut {
         ClientPut {
             uri: uri,
             data_length: data.len(),
-            filename: filename.to_string(),
+            filename: None,
             identifier: identifier.to_string(),
             content_type: Some("text/json".to_string()),
             verbosity: Some(VerbosityPut::SimpleProgress),
