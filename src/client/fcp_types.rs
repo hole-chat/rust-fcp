@@ -1,6 +1,6 @@
 use super::types::*;
 use crate::types::traits::*;
-use crate::types::{SSKKeypair, SSK, ReturnType};
+use crate::types::{ReturnType, SSKKeypair, SSK, USK};
 use regex::Regex;
 
 impl ClientHello {
@@ -187,7 +187,9 @@ fn is_ssk_parsing() {
         }
     );
 }
-
+// TODO Create just Key type which contains from sign_key, decrtypt_key, settings and path.
+// And use it for all keys, like SSK, USK e.t.c.
+/// converting SSK key to string
 impl FcpRequest for SSK {
     fn convert(&self) -> String {
         let mut settings: String = "".to_string();
@@ -211,6 +213,45 @@ fn is_ssk_converting() {
             decrypt_key: "AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM".to_string(),
             settings: Some("AQABAAE".to_string()),
         }.convert(), "SSK@BnHXXv3Fa43w~~iz1tNUd~cj4OpUuDjVouOWZ5XlpX0,AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM,AQABAAE")
+}
+/// converting USK key to string
+impl FcpRequest for USK {
+    fn convert(&self) -> String {
+        let mut settings: String = "".to_string();
+        //There's no might be settings for key, and we skipping it
+        match &self.ssk.settings {
+            Some(res) => settings = format!(",{}", res),
+            _ => {}
+        }
+        format!(
+            "USK@{},{}{}/{}",
+            self.ssk.sign_key, self.ssk.decrypt_key, settings, self.path
+        )
+    }
+}
+
+#[test]
+fn is_usk_converting() {
+    assert_eq!(
+        USK {
+            ssk: SSK {
+            sign_key: "AKTTKG6YwjrHzWo67laRcoPqibyiTdyYufjVg54fBlWr".to_string(),
+            decrypt_key: "AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM".to_string(),
+            settings: None
+            },
+            path: "messages/0".to_string()
+        }
+        .convert(), "USK@AKTTKG6YwjrHzWo67laRcoPqibyiTdyYufjVg54fBlWr,AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM/messages/0");
+    assert_eq!(
+        USK{ ssk:
+             SSK {
+            sign_key: "BnHXXv3Fa43w~~iz1tNUd~cj4OpUuDjVouOWZ5XlpX0".to_string(),
+            decrypt_key: "AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM".to_string(),
+            settings: Some("AQABAAE".to_string()),
+             },
+             path: "messages/0".to_string()
+        }
+        .convert(), "USK@BnHXXv3Fa43w~~iz1tNUd~cj4OpUuDjVouOWZ5XlpX0,AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM,AQABAAE/messages/0")
 }
 
 impl SSKKeypair {
@@ -355,7 +396,7 @@ impl FcpRequest for ClientPut {
 }
 
 impl ClientPut {
-    pub fn new_default_direct(uri: SSK,  identifier: &str, data: &str) -> ClientPut {
+    pub fn new_default_direct(uri: SSK, identifier: &str, data: &str) -> ClientPut {
         ClientPut {
             uri: uri,
             data_length: data.len(),
@@ -395,20 +436,18 @@ fn is_client_put_converting() {
     let fin = "ClientPut\n\
                  URI=SSK@BnHXXv3Fa43w~~iz1tNUd~cj4OpUuDjVouOWZ5XlpX0,AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM,AQABAAE\n\
                  DataLength=8\n\
-                 Filename=thefile\n\
                  ContentType=text/json\n\
                  Identifier=myidentifier\n\
                  Verbosity=0\n\
                  MaxRetries=50\n\
                  EndMessage\n\
                  Hey jude\n";
-    let input = ClientPut::new_default(
+    let input = ClientPut::new_default_direct(
         SSK {
             sign_key: "BnHXXv3Fa43w~~iz1tNUd~cj4OpUuDjVouOWZ5XlpX0".to_string(),
             decrypt_key: "AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM".to_string(),
             settings: Some("AQABAAE".to_string()),
         },
-        "thefile",
         "myidentifier",
         "Hey jude",
     );

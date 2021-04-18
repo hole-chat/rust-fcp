@@ -61,7 +61,7 @@ impl<'de> Deserialize<'de> for SSK {
             where
                 E: de::Error,
             {
-                return Ok(SSK{sign_key: "lol".to_string(), decrypt_key: "kik".to_string(),settings: Some("kek".to_string())});
+                //return Ok(SSK{sign_key: "lol".to_string(), decrypt_key: "kik".to_string(),settings: Some("kek".to_string())});
                 match SSK::parse(v) {
                     Some(ssk) => {
                         Ok(ssk)
@@ -76,7 +76,7 @@ impl<'de> Deserialize<'de> for SSK {
                 where
                     E: de::Error,
             {
-                return Ok(SSK{sign_key: "lol".to_string(), decrypt_key: "kik".to_string(),settings: Some("kek".to_string())});
+                //return Ok(SSK{sign_key: "lol".to_string(), decrypt_key: "kik".to_string(),settings: Some("kek".to_string())});
                 match SSK::parse(v) {
                     Some(ssk) => {
                         Ok(ssk)
@@ -110,7 +110,7 @@ impl<'de> Deserialize<'de> for SSK {
 #[derive(Debug, PartialEq)]
 pub struct USK {
     pub ssk: SSK,
-    pub index: i32,
+    pub path: String,
 }
 
 #[cfg(test)]
@@ -138,8 +138,7 @@ mod tests {
             decrypt_key: "AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM".to_string(),
             settings: None,
         };
-        let res = serde_json::from_str::<SSK>("SSK@AKTTKG6YwjrHzWo67laRcoPqibyiTdyYufjVg54fBlWr,AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM");
-        let aa = res.unwrap();
-        assert_eq!(aa, ssk)
+        let res: SSK = serde_json::from_str("SSK@AKTTKG6YwjrHzWo67laRcoPqibyiTdyYufjVg54fBlWr,AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM").unwrap();
+        assert_eq!(res, ssk)
     }
 }
