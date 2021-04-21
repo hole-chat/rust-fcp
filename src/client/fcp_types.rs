@@ -1,6 +1,7 @@
+use std::ops;
 use super::types::*;
 use crate::types::traits::*;
-use crate::types::{ReturnType, SSKKeypair, SSK, USK};
+use crate::types::{ReturnType, SSKKeypair, SSK, USK, KEY};
 use regex::Regex;
 
 impl ClientHello {
@@ -91,7 +92,7 @@ pub struct GetNode {
 }
 
 pub struct GenerateSSK {
-    identifier: Option<String>,
+    pub identifier: Option<String>,
 }
 
 impl FcpRequest for GenerateSSK {
@@ -187,6 +188,16 @@ fn is_ssk_parsing() {
         }
     );
 }
+
+impl FcpRequest for KEY {
+    fn convert(&self) -> String{
+        match self {
+            KEY::SSK(key) => key.convert(),
+            KEY::USK(key) => key.convert()
+        }
+    }
+}
+
 // TODO Create just Key type which contains from sign_key, decrtypt_key, settings and path.
 // And use it for all keys, like SSK, USK e.t.c.
 /// converting SSK key to string
@@ -200,6 +211,8 @@ impl FcpRequest for SSK {
         format!("SSK@{},{}{}", self.sign_key, self.decrypt_key, settings)
     }
 }
+
+
 
 #[test]
 fn is_ssk_converting() {
@@ -496,8 +509,9 @@ BinaryBlob=false
 FilterData=true
 EndMessage
 */
+
 impl ClientGet {
-    pub fn new_default(uri: SSK, identifier: &str, return_type: ReturnType) -> ClientGet {
+    pub fn new_default(uri: KEY, identifier: &str, return_type: ReturnType) -> ClientGet {
         ClientGet {
             ignore_ds: None,
             ds_only: None,

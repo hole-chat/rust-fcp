@@ -11,12 +11,20 @@ use std::fmt;
 use serde::de::{self, Deserialize, Deserializer, MapAccess, SeqAccess, Visitor, Error};
 use serde::ser::{SerializeStruct, Serializer};
 use serde::Serialize;
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct SSK {
     pub sign_key: String,
     pub decrypt_key: String,
     pub settings: Option<String>,
 }
+
+
+
+pub enum KEY {
+    SSK(SSK),
+    USK(USK),
+}
+
 /// converting SSK to rusqlite type
 impl ToSql for SSK {
     fn to_sql(&self) -> Result<ToSqlOutput<'_>> {
