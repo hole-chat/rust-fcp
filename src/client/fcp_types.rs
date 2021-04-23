@@ -279,7 +279,7 @@ impl SSKKeypair {
 }
 
 pub struct ClientPut {
-    uri: SSK, //TODO create key type
+    uri: USK, //TODO create key type
     data_length: usize,
     filename: Option<String>,
     content_type: Option<String>,
@@ -409,7 +409,7 @@ impl FcpRequest for ClientPut {
 }
 
 impl ClientPut {
-    pub fn new_default_direct(uri: SSK, identifier: &str, data: &str) -> ClientPut {
+    pub fn new_default_direct(uri: USK, identifier: &str, data: &str) -> ClientPut {
         ClientPut {
             uri: uri,
             data_length: data.len(),
@@ -456,10 +456,14 @@ fn is_client_put_converting() {
                  EndMessage\n\
                  Hey jude\n";
     let input = ClientPut::new_default_direct(
-        SSK {
+        USK{
+        ssk: SSK{
             sign_key: "BnHXXv3Fa43w~~iz1tNUd~cj4OpUuDjVouOWZ5XlpX0".to_string(),
             decrypt_key: "AwUSJG5ZS-FDZTqnt6skTzhxQe08T-fbKXj8aEHZsXM".to_string(),
             settings: Some("AQABAAE".to_string()),
+        },
+            path: "myidentifier".to_string()
+
         },
         "myidentifier",
         "Hey jude",
