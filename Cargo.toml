@@ -12,7 +12,7 @@ description = "Implementation of FCPv2 freenet protocol"
 
 [dependencies]
 regex = "1.4.3"
-rusqlite = "0.24.2"
+rusqlite = "0.25.1"
 serde = { version = "1.0", features = ["derive"] }
 [dev-dependencies]
 serde_json  = "1.0"
